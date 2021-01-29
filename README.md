@@ -118,9 +118,7 @@ Below illustrates our `User` model, simplified for our application.
 ```
 User {
 	id:string
-	forename:string
-	surname:string
-	email:string
+	username:string
 }
 ```
 
@@ -131,7 +129,7 @@ Message {
 	id:string
 	sender:string
 	recipient:string
-	body:inputstream
+	body:string
 	likes:integer
 }
 ```
@@ -140,8 +138,8 @@ We will have two types of `MessageQuery`, as described below.
 
 ```
 SenderRecipientMessageQuery {
-	sender:string
-	recipient:string
+	sender:optional<string>
+	recipient:optional<string>
 }
 ```
 
@@ -159,6 +157,8 @@ Below are the basic endpoints which will look to implement.
 `POST /v1/messages/{id}/likes` :- Provides a means to like a message. 
 
 ### High-Level
+
+<b>TODO</b>
 
 ## Getting Started
 
