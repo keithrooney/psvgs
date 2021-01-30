@@ -6,10 +6,7 @@ import org.immutables.value.Value;
 import org.springframework.lang.Nullable;
 
 @Value.Immutable
-public interface User {
-
-    @Nullable
-    String getId();
+public interface User extends Entity {
 
     String getUsername();
 

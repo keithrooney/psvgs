@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.psvgs.dal.DAO;
 import com.psvgs.models.ImmutableMessage;
+import com.psvgs.models.ImmutableUser;
 import com.psvgs.models.Message;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,8 +40,11 @@ public class MessageManagerTest {
 
     @Test
     public void testCreate() {
-        Message message = ImmutableMessage.builder().sender(UUID.randomUUID().toString())
-                .recipient(UUID.randomUUID().toString()).body("This is the body of the message!").build();
+        Message message = ImmutableMessage.builder()
+                .recipient(ImmutableUser.builder().id(UUID.randomUUID().toString())
+                        .username(UUID.randomUUID().toString()).build())
+                .body("This is the body of the message!")
+                .build();
         messageManager.create(message);
         Mockito.verify(messageDAO).create(message);
     }
@@ -52,8 +56,11 @@ public class MessageManagerTest {
 
     @Test
     public void testUpdate() {
-        Message message = ImmutableMessage.builder().sender(UUID.randomUUID().toString())
-                .recipient(UUID.randomUUID().toString()).body("This is the body of the message!").build();
+        Message message = ImmutableMessage.builder()
+                .recipient(ImmutableUser.builder().id(UUID.randomUUID().toString())
+                        .username(UUID.randomUUID().toString()).build())
+                .body("This is the body of the message!")
+                .build();
         messageManager.update(message);
         Mockito.verify(messageDAO).update(message);
     }
@@ -69,7 +76,7 @@ public class MessageManagerTest {
         messageManager.deleteById(id);
         Mockito.verify(messageDAO).deleteById(id);
     }
-    
+
     @Test
     public void testDeleteByIdThrowsNullPointerException() {
         assertThrows(NullPointerException.class, () -> messageManager.deleteById(null));
