@@ -12,9 +12,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.psvgs.dal.DAO;
+import com.psvgs.dal.MessageDAO;
 import com.psvgs.models.ImmutableMessage;
 import com.psvgs.models.Message;
+import com.psvgs.models.MessageQuery;
 
 @ExtendWith(MockitoExtension.class)
 public class MessageManagerTest {
@@ -23,7 +24,7 @@ public class MessageManagerTest {
     private MessageManager messageManager;
 
     @Mock
-    private DAO<Message> messageDAO;
+    private MessageDAO messageDAO;
 
     @AfterEach
     public void afterEach() {
@@ -79,6 +80,13 @@ public class MessageManagerTest {
     @Test
     public void testDeleteByIdThrowsNullPointerException() {
         assertThrows(NullPointerException.class, () -> messageManager.deleteById(null));
+    }
+    
+    @Test
+    public void testQuery() {
+        MessageQuery query = Mockito.mock(MessageQuery.class);
+        messageManager.query(query);
+        Mockito.verify(messageDAO).query(query);
     }
 
 }

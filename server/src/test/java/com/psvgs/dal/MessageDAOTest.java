@@ -2,6 +2,9 @@ package com.psvgs.dal;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,7 +22,9 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.psvgs.models.ImmutableMessage;
+import com.psvgs.models.ImmutableMessageQuery;
 import com.psvgs.models.Message;
+import com.psvgs.models.MessageQuery;
 
 @ActiveProfiles("test")
 @Import(MessageDAO.class)
@@ -63,6 +68,37 @@ public class MessageDAOTest {
         assertEquals(Optional.empty(), messageDAO.findById(UUID.randomUUID().toString()));
     }
     
+    @Test
+    public void testQuery() {
+
+        List<Message> messages = Arrays.asList(
+            ImmutableMessage.builder().sender("me").recipient("you").body("Pub!").build(),
+            ImmutableMessage.builder().sender("you").recipient("me").body("Yes!!!").build(),
+            ImmutableMessage.builder().sender("him").recipient("her").body("Hey!").build(),
+            ImmutableMessage.builder().sender("him").recipient("her").body("You there?").build()
+        );
+        
+        for (Message message: messages) {
+            messageDAO.create(message);
+        }
+        
+        MessageQuery query = ImmutableMessageQuery.builder().participants(new HashSet<>(Arrays.asList("me", "you"))).build();
+        assertEquals(2, messageDAO.query(query).size());
+
+        query = ImmutableMessageQuery.builder().participants(new HashSet<>(Arrays.asList("him"))).build();
+        assertEquals(2, messageDAO.query(query).size());
+
+        query = ImmutableMessageQuery.builder().participants(new HashSet<>(Arrays.asList("him"))).pageSize(1).build();
+        assertEquals(1, messageDAO.query(query).size());
+
+        query = ImmutableMessageQuery.builder().participants(new HashSet<>(Arrays.asList("him"))).page(3).pageSize(1).build();
+        assertEquals(0, messageDAO.query(query).size());
+
+        query = ImmutableMessageQuery.builder().participants(new HashSet<>(Arrays.asList("him"))).page(-1).pageSize(-1).build();
+        assertEquals(2, messageDAO.query(query).size());
+
+    }
+    
     public static class ContainerSourceInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         
         @Override
@@ -70,8 +106,8 @@ public class MessageDAOTest {
             TestPropertySourceUtils.addInlinedPropertiesToEnvironment(
                     applicationContext,
                     "spring.data.mongodb.host=" + CONTAINER.getHost(),
-                    "spring.data.mongodb.port=27017",
-                    "spring.data.mongodb.database=messages"
+                    "spring.data.mongodb.port=" + CONTAINER.getMappedPort(27017),
+                    "spring.data.mongodb.database=psvgs"
             );
         }
     }

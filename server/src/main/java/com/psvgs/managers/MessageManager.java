@@ -1,17 +1,22 @@
 package com.psvgs.managers;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.psvgs.dal.DAO;
+import org.springframework.stereotype.Service;
+
+import com.psvgs.dal.MessageDAO;
 import com.psvgs.models.ImmutableMessage;
 import com.psvgs.models.Message;
+import com.psvgs.models.MessageQuery;
 
-public class MessageManager implements Manager<Message> {
+@Service
+public class MessageManager implements Manager<Message>, Querier<Message, MessageQuery> {
 
-    private DAO<Message> messageDAO;
+    private MessageDAO messageDAO;
 
-    public MessageManager(DAO<Message> messageDAO) {
+    public MessageManager(MessageDAO messageDAO) {
         this.messageDAO = messageDAO;
     }
 
@@ -31,6 +36,11 @@ public class MessageManager implements Manager<Message> {
 
     public void deleteById(String id) {
         messageDAO.deleteById(Objects.requireNonNull(id));
+    }
+
+    @Override
+    public List<Message> query(MessageQuery query) {
+        return messageDAO.query(Objects.requireNonNull(query));
     }
 
 }
