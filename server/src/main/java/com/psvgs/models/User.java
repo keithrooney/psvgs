@@ -11,9 +11,11 @@ public interface User extends Entity {
     String getUsername();
 
     @Nullable
+    @Value.Auxiliary
     LocalDateTime getCreatedAt();
 
     @Nullable
+    @Value.Auxiliary
     LocalDateTime getUpdatedAt();
 
 }

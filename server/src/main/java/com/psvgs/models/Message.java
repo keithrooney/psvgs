@@ -6,27 +6,43 @@ import java.util.List;
 import java.util.Map;
 
 import org.immutables.value.Value;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.lang.Nullable;
 
+@Value.Style(
+    of = "new", 
+    allParameters = true,
+    passAnnotations = {PersistenceConstructor.class}
+)
 @Value.Immutable
-public interface Message {
+public abstract class Message {
 
-    @Nullable
-    String getId();
-
-    Entity getRecipient();
-
-    String getBody();
+    @PersistenceConstructor
+    public Message() {
+    }
     
+    @Id
+    @Nullable
+    public abstract String getId();
+
+    public abstract String getSender();
+
+    public abstract String getRecipient(); 
+
+    public abstract String getBody();
+
     @Value.Default
-    default Map<Like, List<Entity>> getLikes() {
+    public Map<Like, List<Entity>> getLikes() {
         return Collections.emptyMap();
     }
 
     @Nullable
-    LocalDateTime getCreatedAt();
+    @Value.Auxiliary
+    public abstract LocalDateTime getCreatedAt();
 
     @Nullable
-    LocalDateTime getUpdatedAt();
+    @Value.Auxiliary
+    public abstract LocalDateTime getUpdatedAt();
 
 }

@@ -29,8 +29,8 @@ public class MessageManager implements Manager<Message> {
         return messageDAO.update(ImmutableMessage.copyOf(message));
     }
 
-    public Message deleteById(String id) {
-        return messageDAO.deleteById(Objects.requireNonNull(id));
+    public void deleteById(String id) {
+        messageDAO.deleteById(Objects.requireNonNull(id));
     }
 
 }

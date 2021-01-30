@@ -14,7 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.psvgs.dal.DAO;
 import com.psvgs.models.ImmutableMessage;
-import com.psvgs.models.ImmutableUser;
 import com.psvgs.models.Message;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,8 +40,8 @@ public class MessageManagerTest {
     @Test
     public void testCreate() {
         Message message = ImmutableMessage.builder()
-                .recipient(ImmutableUser.builder().id(UUID.randomUUID().toString())
-                        .username(UUID.randomUUID().toString()).build())
+                .sender(UUID.randomUUID().toString())
+                .recipient(UUID.randomUUID().toString())
                 .body("This is the body of the message!")
                 .build();
         messageManager.create(message);
@@ -57,8 +56,8 @@ public class MessageManagerTest {
     @Test
     public void testUpdate() {
         Message message = ImmutableMessage.builder()
-                .recipient(ImmutableUser.builder().id(UUID.randomUUID().toString())
-                        .username(UUID.randomUUID().toString()).build())
+                .sender(UUID.randomUUID().toString())
+                .recipient(UUID.randomUUID().toString())
                 .body("This is the body of the message!")
                 .build();
         messageManager.update(message);

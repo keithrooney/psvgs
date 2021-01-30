@@ -6,5 +6,5 @@ public interface DAO<T> {
     Optional<T> findById(String id);
     T create(T object);
     T update(T object);
-    T deleteById(String id);
+    void deleteById(String id);
 }

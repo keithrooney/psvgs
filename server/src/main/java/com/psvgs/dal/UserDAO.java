@@ -64,7 +64,7 @@ public class UserDAO implements DAO<User> {
     }
 
     @Override
-    public User deleteById(String id) {
+    public void deleteById(String id) {
         throw new UnsupportedOperationException();
     }
 
