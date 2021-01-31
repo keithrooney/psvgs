@@ -35,13 +35,13 @@ public class MessageController {
         this.messageManager = messageManager;
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public Message create(@RequestBody MessageCreateRequest request) {
         return messageManager.create(ImmutableMessage.builder().sender(request.getSender())
                 .recipient(request.getRecipient()).body(request.getBody()).build());
     }
 
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public Message update(@RequestBody MessageUpdateRequest request) {
         return messageManager.update(ImmutableMessage.builder().id(request.getId()).body(request.getBody()).build());
     }
@@ -67,7 +67,7 @@ public class MessageController {
         return messageManager.query(query);
     }
     
-    @PutMapping(path = "/{id}/likes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/{id}/likes", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void like(@PathVariable String id, @RequestBody LikeUpdateRequest like) {
         messageManager.like(id, ImmutableLike.builder().username(like.getUsername()).emoji(like.getEmoji()).build());
