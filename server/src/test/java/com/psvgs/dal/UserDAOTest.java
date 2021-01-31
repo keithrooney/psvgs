@@ -32,6 +32,7 @@ public class UserDAOTest {
         User clone = userDAO.create(user);
         
         assertEquals(clone, userDAO.findById(clone.getId()).orElseThrow());
+        assertEquals(clone, userDAO.findByUsername(clone.getUsername()).orElseThrow());
         
         userDAO.update(ImmutableUser.builder().from(user).username("Wolverine").build());
 

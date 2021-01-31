@@ -2,6 +2,7 @@ package com.psvgs.managers;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.AfterEach;
@@ -13,9 +14,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.psvgs.dal.MessageDAO;
+import com.psvgs.dal.UserDAO;
 import com.psvgs.models.ImmutableMessage;
 import com.psvgs.models.Message;
 import com.psvgs.models.MessageQuery;
+import com.psvgs.models.User;
 
 @ExtendWith(MockitoExtension.class)
 public class MessageManagerTest {
@@ -25,10 +28,13 @@ public class MessageManagerTest {
 
     @Mock
     private MessageDAO messageDAO;
+    
+    @Mock
+    private UserDAO userDAO;
 
     @AfterEach
     public void afterEach() {
-        Mockito.verifyNoMoreInteractions(messageDAO);
+        Mockito.verifyNoMoreInteractions(messageDAO, userDAO);
     }
 
     @Test
@@ -45,8 +51,17 @@ public class MessageManagerTest {
                 .recipient(UUID.randomUUID().toString())
                 .body("This is the body of the message!")
                 .build();
+        
+        User user = Mockito.mock(User.class);
+        Mockito.when(userDAO.findByUsername(message.getSender())).thenReturn(Optional.of(user));
+        Mockito.when(userDAO.findByUsername(message.getRecipient())).thenReturn(Optional.of(user));
+        
         messageManager.create(message);
+        
         Mockito.verify(messageDAO).create(message);
+        Mockito.verify(userDAO).findByUsername(message.getSender());
+        Mockito.verify(userDAO).findByUsername(message.getRecipient());
+        
     }
 
     @Test

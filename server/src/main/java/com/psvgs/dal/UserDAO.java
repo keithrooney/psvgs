@@ -31,6 +31,8 @@ public class UserDAO implements DAO<User> {
 
     private static final String SELECT_BY_ID = "select * from users where id = ?";
 
+    private static final String SELECT_BY_USERNAME = "select * from users where username = ?";
+
     private static final String INSERT = "insert into users values (?, ?, ?, ?)";
 
     private static final String UPDATE_BY_ID = "update users set username = ?, updated_at = ? where id = ?";
@@ -45,12 +47,7 @@ public class UserDAO implements DAO<User> {
 
     @Override
     public Optional<User> findById(String id) {
-        try {
-            return Optional.of(
-                    jdbcTemplate.queryForObject(SELECT_BY_ID, new Object[] { Objects.requireNonNull(id) }, ROW_MAPPER));
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+        return findBy(SELECT_BY_ID, new Object[] { Objects.requireNonNull(id) });
     }
 
     @Override
@@ -73,5 +70,18 @@ public class UserDAO implements DAO<User> {
     public void deleteById(String id) {
         jdbcTemplate.update(DELETE_BY_ID, new Object[] { Objects.requireNonNull(id) });
     }
+    
+    public Optional<User> findByUsername(String username) {
+        return findBy(SELECT_BY_USERNAME, new Object[] { Objects.requireNonNull(username) });
+    }
 
+    private Optional<User> findBy(String sql, Object[] args) {
+        try {
+            return Optional.of(
+                    jdbcTemplate.queryForObject(sql, args, ROW_MAPPER));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+    
 }
