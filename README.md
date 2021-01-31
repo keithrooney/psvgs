@@ -85,15 +85,15 @@ be to make use of a NoSQL and SQL solution, such as those already mentioned.
 
 ## The musts ... 
 
-* The application must be able to create a user.
-* The application must be able to create/update/delete a message.
-* The application must be able to send messages between two users.
-* The application must be able to like a message.
-* The application must be able to get messages based on a query.
-* The application must be able to handle at least 200 requests/second.
-* The application must be able to run in the cloud or a container.
-* The application must have unit tests to ensure code quality.
-* The application must have integration tests to ensure code quality.
+- [ ] The application must be able to create a user.
+- [ ] The application must be able to create/update/delete a message.
+- [ ] The application must be able to send messages between two users.
+- [ ] The application must be able to like a message.
+- [ ] The application must be able to get messages based on a query.
+- [ ] The application must be able to handle at least 200 requests/second.
+- [ ] The application must be able to run in the cloud or a container.
+- [ ] The application must have unit tests to ensure code quality.
+- [ ] The application must have integration tests to ensure code quality.
 
 <b>Note</b>: The message query above should allow for querying between two users explicitly, as well as one user.
 
@@ -118,9 +118,7 @@ Below illustrates our `User` model, simplified for our application.
 ```
 User {
 	id:string
-	forename:string
-	surname:string
-	email:string
+	username:string
 }
 ```
 
@@ -131,7 +129,7 @@ Message {
 	id:string
 	sender:string
 	recipient:string
-	body:inputstream
+	body:string
 	likes:integer
 }
 ```
@@ -140,8 +138,8 @@ We will have two types of `MessageQuery`, as described below.
 
 ```
 SenderRecipientMessageQuery {
-	sender:string
-	recipient:string
+	sender:optional<string>
+	recipient:optional<string>
 }
 ```
 
@@ -157,10 +155,4 @@ Below are the basic endpoints which will look to implement.
 `DELETE /v1/messages/{id}` :- For message deletion, if needed.
 `GET /v1/messages` :- Allow execution of queries for messages.
 `POST /v1/messages/{id}/likes` :- Provides a means to like a message. 
-
-### High-Level
-
-## Getting Started
-
-<b>TODO</b>
 
