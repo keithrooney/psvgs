@@ -1,11 +1,10 @@
 package com.psvgs;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.io.UnsupportedEncodingException;
-import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +25,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.psvgs.models.ImmutableUser;
-import com.psvgs.models.User;
+import com.psvgs.requests.ImmutableMessageCreateRequest;
+import com.psvgs.requests.ImmutableMessageUpdateRequest;
+import com.psvgs.requests.MessageCreateRequest;
+import com.psvgs.requests.MessageUpdateRequest;
 
 @Testcontainers
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ContextConfiguration(initializers = UserControllerIT.ContainerSourceInitializer.class)
-public class UserControllerIT {
+@ContextConfiguration(initializers = MessageControllerIT.ContainerSourceInitializer.class)
+public class MessageControllerIT {
 
     public static final MongoDBContainer CONTAINER = new MongoDBContainer("mongo:4.4.3");
 
@@ -49,14 +51,29 @@ public class UserControllerIT {
     private ObjectMapper objectMapper;
 
     @Test
-    public void testCreateIsOk() throws UnsupportedEncodingException, JsonProcessingException, Exception {
+    public void testCreateUpdateDelete() throws JsonProcessingException, Exception {
+        
+        mockMvc.perform(
+                post("/v1/users")
+                .content(objectMapper.writeValueAsString(ImmutableUser.builder().username("Thor Odinson").build()))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+        .andExpect(status().isOk());
 
-        User user = ImmutableUser.builder().username("Thor Odinson").build();
+        mockMvc.perform(
+                post("/v1/users")
+                .content(objectMapper.writeValueAsString(ImmutableUser.builder().username("Wolverine").build()))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+        .andExpect(status().isOk());
+        
+        MessageCreateRequest messageCreateRequest = ImmutableMessageCreateRequest.builder().sender("Thor Odinson")
+                .recipient("Wolverine").body("Deadpool is at it, again!").build();
 
-        String userId = JsonPath.read(
+        String messageId = JsonPath.read(
             mockMvc.perform(
-                    post("/v1/users")
-                    .content(objectMapper.writeValueAsString(user))
+                    post("/v1/messages")
+                    .content(objectMapper.writeValueAsString(messageCreateRequest))
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isOk())
@@ -65,16 +82,27 @@ public class UserControllerIT {
             .getContentAsString(), 
             "$.id"
         );
-
-        mockMvc.perform(get("/v1/users/" + userId)).andExpect(status().isOk());
         
+        mockMvc.perform(get("/v1/messages/" + messageId)).andExpect(status().isOk());
+        
+        MessageUpdateRequest messageUpdateRequest = ImmutableMessageUpdateRequest.builder().id(messageId).body("A change to the body of the content!").build();
+        
+        mockMvc.perform(
+                put("/v1/messages")
+                .content(objectMapper.writeValueAsString(messageUpdateRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+        .andExpect(status().isOk());
+        
+        mockMvc.perform(
+                get("/v1/messages")
+                .param("participants", "Wolverine")
+        ).andExpect(status().isOk());
+
+        mockMvc.perform(delete("/v1/messages/" + messageId)).andExpect(status().isNoContent());
+
     }
     
-    @Test
-    public void testFindByIdReturns404() throws UnsupportedEncodingException, JsonProcessingException, Exception {
-        mockMvc.perform(get("/v1/users/" + UUID.randomUUID().toString())).andExpect(status().isNotFound());
-    }
-
     public static class ContainerSourceInitializer
             implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 

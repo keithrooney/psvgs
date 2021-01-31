@@ -26,8 +26,10 @@ public abstract class Message {
     @Nullable
     public abstract String getId();
 
+    @Nullable
     public abstract String getSender();
 
+    @Nullable
     public abstract String getRecipient(); 
 
     public abstract String getBody();
