@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.psvgs.managers.Manager;
+import com.psvgs.models.ImmutableUser;
 import com.psvgs.models.User;
+import com.psvgs.requests.UserCreateRequest;
 
 @RestController
 @RequestMapping("/v1/users")
@@ -26,8 +28,8 @@ public class UserController {
     }
     
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public User create(@RequestBody User user) {
-        return userManager.create(user);
+    public User create(@RequestBody UserCreateRequest request) {
+        return userManager.create(ImmutableUser.builder().username(request.getUsername()).build());
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

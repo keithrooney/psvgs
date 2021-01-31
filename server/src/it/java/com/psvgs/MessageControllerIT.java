@@ -24,9 +24,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import com.psvgs.models.ImmutableUser;
 import com.psvgs.requests.ImmutableMessageCreateRequest;
 import com.psvgs.requests.ImmutableMessageUpdateRequest;
+import com.psvgs.requests.ImmutableUserCreateRequest;
 import com.psvgs.requests.MessageCreateRequest;
 import com.psvgs.requests.MessageUpdateRequest;
 
@@ -55,14 +55,14 @@ public class MessageControllerIT {
         
         mockMvc.perform(
                 post("/v1/users")
-                .content(objectMapper.writeValueAsString(ImmutableUser.builder().username("Thor Odinson").build()))
+                .content(objectMapper.writeValueAsString(ImmutableUserCreateRequest.builder().username("Thor Odinson").build()))
                 .contentType(MediaType.APPLICATION_JSON)
         )
         .andExpect(status().isOk());
 
         mockMvc.perform(
                 post("/v1/users")
-                .content(objectMapper.writeValueAsString(ImmutableUser.builder().username("Wolverine").build()))
+                .content(objectMapper.writeValueAsString(ImmutableUserCreateRequest.builder().username("Wolverine").build()))
                 .contentType(MediaType.APPLICATION_JSON)
         )
         .andExpect(status().isOk());

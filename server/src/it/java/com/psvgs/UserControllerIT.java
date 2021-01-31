@@ -25,8 +25,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import com.psvgs.models.ImmutableUser;
-import com.psvgs.models.User;
+import com.psvgs.requests.ImmutableUserCreateRequest;
+import com.psvgs.requests.UserCreateRequest;
 
 @Testcontainers
 @AutoConfigureMockMvc
@@ -51,12 +51,12 @@ public class UserControllerIT {
     @Test
     public void testCreateIsOk() throws UnsupportedEncodingException, JsonProcessingException, Exception {
 
-        User user = ImmutableUser.builder().username("Thor Odinson").build();
+        UserCreateRequest request = ImmutableUserCreateRequest.builder().username("Deadpool").build();
 
         String userId = JsonPath.read(
             mockMvc.perform(
                     post("/v1/users")
-                    .content(objectMapper.writeValueAsString(user))
+                    .content(objectMapper.writeValueAsString(request))
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isOk())
