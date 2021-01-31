@@ -44,7 +44,7 @@ public class UserManagerTest {
 
     @Test
     public void testCreate() {
-        ImmutableUser user = ImmutableUser.builder().username(UUID.randomUUID().toString()).build();
+        User user = ImmutableUser.builder().username(UUID.randomUUID().toString()).build();
         userManager.create(user);
         Mockito.verify(userDAO).create(user);
     }
@@ -52,6 +52,30 @@ public class UserManagerTest {
     @Test
     public void testCreateThrowsNullPointerException() {
         assertThrows(NullPointerException.class, () -> userManager.create(null));
+    }
+    
+    @Test
+    public void testUpdate() {
+        User user = ImmutableUser.builder().username(UUID.randomUUID().toString()).build();
+        userManager.update(user);
+        Mockito.verify(userDAO).update(user);
+    }
+
+    @Test
+    public void testUpdateThrowsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> userManager.update(null));
+    }
+
+    @Test
+    public void testDeleteById() {
+        String id = UUID.randomUUID().toString();
+        userManager.deleteById(id);
+        Mockito.verify(userDAO).deleteById(id);
+    }
+
+    @Test
+    public void testDeleteByIdThrowsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> userManager.deleteById(null));
     }
 
 }

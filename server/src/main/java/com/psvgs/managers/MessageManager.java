@@ -12,7 +12,7 @@ import com.psvgs.models.Message;
 import com.psvgs.models.MessageQuery;
 
 @Service
-public class MessageManager implements Manager<Message>, Querier<Message, MessageQuery> {
+public class MessageManager implements QueryableManager<Message, MessageQuery> {
 
     private MessageDAO messageDAO;
 

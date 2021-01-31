@@ -21,4 +21,14 @@ public class UserManager implements Manager<User> {
         return userDAO.create(ImmutableUser.copyOf(user));
     }
 
+    @Override
+    public User update(User user) {
+        return userDAO.update(Objects.requireNonNull(user));
+    }
+
+    @Override
+    public void deleteById(String id) {
+        userDAO.deleteById(Objects.requireNonNull(id));
+    }
+
 }

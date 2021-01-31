@@ -17,7 +17,7 @@ import com.psvgs.models.Message;
 import com.psvgs.models.MessageQuery;
 
 @Repository
-public class MessageDAO implements DAO<Message> {
+public class MessageDAO implements QueryableDAO<Message, MessageQuery> {
 
     private static final String DEFAULT_COLLECTION_NAME = "messages";
     
@@ -59,6 +59,7 @@ public class MessageDAO implements DAO<Message> {
         mongoTemplate.remove(query, ImmutableMessage.class, DEFAULT_COLLECTION_NAME);
     }
 
+    @Override
     public List<Message> query(MessageQuery messageQuery) {
         Criteria criteria = new Criteria();
         criteria.orOperator(

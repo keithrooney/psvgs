@@ -1,7 +1,6 @@
 package com.psvgs.dal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -26,25 +25,27 @@ public class UserDAOTest {
     private UserDAO userDAO;
     
     @Test
-    public void testCreate() {
+    public void testCreateUpdateDelete() {
+        
         User user = ImmutableUser.builder().username("Iron Man").build();
+        
         User clone = userDAO.create(user);
+        
         assertEquals(clone, userDAO.findById(clone.getId()).orElseThrow());
+        
+        userDAO.update(ImmutableUser.builder().from(user).username("Wolverine").build());
+
+        assertEquals(clone, userDAO.findById(clone.getId()).orElseThrow());
+
+        userDAO.deleteById(clone.getId());
+        
+        assertEquals(Optional.empty(), userDAO.findById(clone.getId()));
+
     }
     
     @Test
-    public void testCreateReturnsEmptyOptional() {
+    public void testFindByIdReturnsEmptyOptional() {
         assertEquals(Optional.empty(), userDAO.findById(UUID.randomUUID().toString()));
     }
     
-    @Test
-    public void testUpdateThrowsUnsupportedOperationException() {
-        assertThrows(UnsupportedOperationException.class, () -> userDAO.update(null));
-    }
-
-    @Test
-    public void testDeleteByIdThrowsUnsupportedOperationException() {
-        assertThrows(UnsupportedOperationException.class, () -> userDAO.deleteById(null));
-    }
-
 }

@@ -33,6 +33,10 @@ public class UserDAO implements DAO<User> {
 
     private static final String INSERT = "insert into users values (?, ?, ?, ?)";
 
+    private static final String UPDATE_BY_ID = "update users set username = ?, updated_at = ? where id = ?";
+
+    private static final String DELETE_BY_ID = "delete from users where id = ?";
+
     private JdbcTemplate jdbcTemplate;
 
     public UserDAO(JdbcTemplate jdbcTemplate) {
@@ -60,12 +64,14 @@ public class UserDAO implements DAO<User> {
 
     @Override
     public User update(User user) {
-        throw new UnsupportedOperationException();
+        ImmutableUser clone = ImmutableUser.builder().from(user).updatedAt(LocalDateTime.now()).build();
+        jdbcTemplate.update(UPDATE_BY_ID, new Object[] { clone.getUsername(), clone.getUpdatedAt(), clone.getId() });
+        return clone;
     }
 
     @Override
     public void deleteById(String id) {
-        throw new UnsupportedOperationException();
+        jdbcTemplate.update(DELETE_BY_ID, new Object[] { Objects.requireNonNull(id) });
     }
 
 }
