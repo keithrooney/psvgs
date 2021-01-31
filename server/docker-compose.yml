@@ -1,0 +1,49 @@
+version: '3.9' # optional since v1.27.0
+services:
+   mysql:
+      image: mysql:8
+      ports:
+      - 3306:3306
+      environment:
+         MYSQL_USER: password
+         MYSQL_DATABASE: psvgs
+         MYSQL_USER_PASSWORD: root
+         MYSQL_ROOT_PASSWORD: password
+      command: --default-authentication-plugin=mysql_native_password
+      hostname: mysql
+      volumes:
+      - /tmp/mysql:/var/lib/mysql
+      networks:
+         - psvgs
+   mongodb:
+      image: mongo:4.4.3
+      ports:
+      - 27017:27017
+      hostname: mongodb
+      networks:
+         - psvgs
+   backend:
+      build:
+         context: .
+         dockerfile: Dockerfile
+      restart: on-failure
+      ports:
+      - 8080:8080
+      environment:
+         SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+         SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/psvgs?allowPublicKeyRetrieval=true&useSSL=false
+         SPRING_DATASOURCE_USERNAME: root
+         SPRING_DATASOURCE_PASSWORD: password
+         SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
+         SPRING_JPA_HIBERNATE_DDL_AUTO: none
+         SPRING_DATA_MONGODB_HOST: mongodb
+         SPRING_DATA_MONGODB_PORT: 27017
+         SPRING_DATA_MONGODB_DATABASE: psvgs
+      depends_on:
+      - mongodb
+      - mysql
+      networks:
+      - psvgs         
+networks:
+  psvgs:
+     driver: bridge
