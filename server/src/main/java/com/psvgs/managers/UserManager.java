@@ -3,13 +3,20 @@ package com.psvgs.managers;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import com.psvgs.dal.DAO;
 import com.psvgs.models.ImmutableUser;
 import com.psvgs.models.User;
 
+@Service
 public class UserManager implements Manager<User> {
 
     private DAO<User> userDAO;
+    
+    public UserManager(DAO<User> userDAO) {
+        this.userDAO = userDAO;
+    }
 
     @Override
     public Optional<User> findById(String id) {
