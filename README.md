@@ -156,11 +156,3 @@ Below are the basic endpoints which will look to implement.
 `GET /v1/messages` :- Allow execution of queries for messages.
 `POST /v1/messages/{id}/likes` :- Provides a means to like a message. 
 
-### High-Level
-
-<b>TODO</b>
-
-## Getting Started
-
-<b>TODO</b>
-
