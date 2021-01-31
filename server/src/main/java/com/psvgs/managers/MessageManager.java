@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.psvgs.dal.MessageDAO;
 import com.psvgs.dal.UserDAO;
 import com.psvgs.models.ImmutableMessage;
+import com.psvgs.models.Like;
 import com.psvgs.models.Message;
 import com.psvgs.models.MessageQuery;
 
@@ -49,6 +50,14 @@ public class MessageManager implements QueryableManager<Message, MessageQuery> {
     @Override
     public List<Message> query(MessageQuery query) {
         return messageDAO.query(Objects.requireNonNull(query));
+    }
+
+    public void like(String id, Like like) {
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(like);
+        findById(id).orElseThrow();
+        userDAO.findByUsername(like.getUsername()).orElseThrow();
+        messageDAO.like(id, like);
     }
 
 }

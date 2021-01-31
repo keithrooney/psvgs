@@ -1,5 +1,9 @@
 package com.psvgs.models;
 
+import org.immutables.value.Value;
+
+@Value.Immutable
 public interface Like {
-    String getEmoji();
+    String getUsername();
+    Emoji getEmoji();
 }

@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.psvgs.managers.QueryableManager;
+import com.psvgs.managers.MessageManager;
+import com.psvgs.models.ImmutableLike;
 import com.psvgs.models.ImmutableMessage;
 import com.psvgs.models.Message;
 import com.psvgs.models.MessageQuery;
+import com.psvgs.requests.LikeUpdateRequest;
 import com.psvgs.requests.MessageCreateRequest;
 import com.psvgs.requests.MessageUpdateRequest;
 
@@ -27,9 +29,9 @@ import com.psvgs.requests.MessageUpdateRequest;
 @RequestMapping("/v1/messages")
 public class MessageController {
 
-    private QueryableManager<Message, MessageQuery> messageManager;
+    private MessageManager messageManager;
 
-    public MessageController(QueryableManager<Message, MessageQuery> messageManager) {
+    public MessageController(MessageManager messageManager) {
         this.messageManager = messageManager;
     }
 
@@ -63,6 +65,12 @@ public class MessageController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Message> query(MessageQuery query) {
         return messageManager.query(query);
+    }
+    
+    @PutMapping(path = "/{id}/likes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void like(@PathVariable String id, @RequestBody LikeUpdateRequest like) {
+        messageManager.like(id, ImmutableLike.builder().username(like.getUsername()).emoji(like.getEmoji()).build());
     }
 
 }

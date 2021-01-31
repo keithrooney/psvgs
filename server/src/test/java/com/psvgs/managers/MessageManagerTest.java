@@ -15,7 +15,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.psvgs.dal.MessageDAO;
 import com.psvgs.dal.UserDAO;
+import com.psvgs.models.Emoji;
+import com.psvgs.models.ImmutableLike;
 import com.psvgs.models.ImmutableMessage;
+import com.psvgs.models.Like;
 import com.psvgs.models.Message;
 import com.psvgs.models.MessageQuery;
 import com.psvgs.models.User;
@@ -102,6 +105,23 @@ public class MessageManagerTest {
         MessageQuery query = Mockito.mock(MessageQuery.class);
         messageManager.query(query);
         Mockito.verify(messageDAO).query(query);
+    }
+    
+    @Test
+    public void testLike() {
+
+        String id = UUID.randomUUID().toString();
+        Like like = ImmutableLike.builder().username(UUID.randomUUID().toString()).emoji(Emoji.THUMBS_UP).build();
+        
+        Mockito.when(messageDAO.findById(id)).thenReturn(Optional.of(Mockito.mock(Message.class)));
+        Mockito.when(userDAO.findByUsername(like.getUsername())).thenReturn(Optional.of(Mockito.mock(User.class)));
+        
+        messageManager.like(id, like);
+
+        Mockito.verify(messageDAO).like(id, like);
+        Mockito.verify(messageDAO).findById(id);
+        Mockito.verify(userDAO).findByUsername(like.getUsername());
+        
     }
 
 }

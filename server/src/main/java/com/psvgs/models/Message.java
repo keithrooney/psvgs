@@ -3,7 +3,6 @@ package com.psvgs.models;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.immutables.value.Value;
 import org.springframework.data.annotation.Id;
@@ -35,8 +34,8 @@ public abstract class Message {
     public abstract String getBody();
 
     @Value.Default
-    public Map<Like, List<Entity>> getLikes() {
-        return Collections.emptyMap();
+    public List<Like> getLikes() {
+        return Collections.emptyList();
     }
 
     @Nullable

@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import com.psvgs.models.ImmutableMessage;
+import com.psvgs.models.Like;
 import com.psvgs.models.Message;
 import com.psvgs.models.MessageQuery;
 
@@ -72,6 +73,15 @@ public class MessageDAO implements QueryableDAO<Message, MessageQuery> {
         List<ImmutableMessage> result = mongoTemplate.find(Query.query(criteria).skip(offset).limit(pageSize),
                 ImmutableMessage.class, DEFAULT_COLLECTION_NAME);
         return result.stream().map(it -> it).collect(Collectors.toList());
+    }
+    
+    public void like(String id, Like like) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(id));
+        Update definition = new Update();
+        definition.addToSet("likes", like);
+        definition.set("updatedAt", LocalDateTime.now());
+        mongoTemplate.updateFirst(query, definition, ImmutableMessage.class, DEFAULT_COLLECTION_NAME);
     }
 
 }

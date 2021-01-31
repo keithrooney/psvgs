@@ -24,9 +24,12 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import com.psvgs.models.Emoji;
+import com.psvgs.requests.ImmutableLikeUpdateRequest;
 import com.psvgs.requests.ImmutableMessageCreateRequest;
 import com.psvgs.requests.ImmutableMessageUpdateRequest;
 import com.psvgs.requests.ImmutableUserCreateRequest;
+import com.psvgs.requests.LikeUpdateRequest;
 import com.psvgs.requests.MessageCreateRequest;
 import com.psvgs.requests.MessageUpdateRequest;
 
@@ -99,6 +102,14 @@ public class MessageControllerIT {
                 .param("participants", "Wolverine")
         ).andExpect(status().isOk());
 
+        LikeUpdateRequest likeUpdateRequest = ImmutableLikeUpdateRequest.builder().username("Thor Odinson").emoji(Emoji.THUMBS_UP).build();
+        
+        mockMvc.perform(
+                put("/v1/messages/" + messageId + "/likes")
+                .content(objectMapper.writeValueAsString(likeUpdateRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNoContent());
+        
         mockMvc.perform(delete("/v1/messages/" + messageId)).andExpect(status().isNoContent());
 
     }

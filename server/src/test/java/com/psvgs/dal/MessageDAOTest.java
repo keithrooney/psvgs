@@ -3,6 +3,7 @@ package com.psvgs.dal;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +22,11 @@ import org.springframework.test.context.support.TestPropertySourceUtils;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import com.psvgs.models.Emoji;
+import com.psvgs.models.ImmutableLike;
 import com.psvgs.models.ImmutableMessage;
 import com.psvgs.models.ImmutableMessageQuery;
+import com.psvgs.models.Like;
 import com.psvgs.models.Message;
 import com.psvgs.models.MessageQuery;
 
@@ -57,6 +61,12 @@ public class MessageDAOTest {
 
         assertEquals(clone, messageDAO.findById(clone.getId()).orElseThrow());
 
+        Like like = ImmutableLike.builder().username(UUID.randomUUID().toString()).emoji(Emoji.THUMBS_UP).build();
+        messageDAO.like(clone.getId(), like);
+
+        clone = messageDAO.findById(clone.getId()).orElseThrow();
+        assertEquals(Collections.singletonList(like), clone.getLikes());
+        
         messageDAO.deleteById(clone.getId());
 
         assertEquals(Optional.empty(), messageDAO.findById(clone.getId()));
